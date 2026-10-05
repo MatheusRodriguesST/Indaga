@@ -2,11 +2,12 @@
 
 import { Check, ChevronDown, ListChecks, RotateCcw, Share2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { BRAND } from "@/config/brand";
 import { cn } from "@/lib/cn";
 import { pad2 } from "@/lib/labels";
+import { track, trackOnce } from "@/lib/track";
 import type { SessionState } from "@/types/domain";
 import { Dossier } from "./Dossier";
 import { NumbersIntro, NumbersSection } from "@/components/banco/NumbersSection";
@@ -24,8 +25,28 @@ export function ResultView({
   const score = state.score ?? Object.values(state.reveals).filter((r) => r.is_correct).length;
   const [open, setOpen] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const numbersRef = useRef<HTMLElement>(null);
+
+  // "viu os gráficos": quando o 1º gráfico entra de fato na tela (uma vez por partida)
+  useEffect(() => {
+    const el = numbersRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          trackOnce(`numbers_${state.session_id}`, "numbers_view", { score: state.score ?? null });
+          io.disconnect();
+        }
+      },
+      { threshold: 0.35 },
+    );
+    const target = el.querySelector("figure") ?? el;
+    io.observe(target);
+    return () => io.disconnect();
+  }, [state.session_id, state.score]);
 
   async function share() {
+    track("share_click");
     const url = window.location.origin;
     const text = `Fiz ${score}/${total} no desafio ${BRAND.name}. E você?`;
     try {
@@ -63,7 +84,7 @@ export function ResultView({
       </section>
 
       {/* os números — logo abaixo do placar */}
-      <section className="mt-14" aria-labelledby="numeros-title">
+      <section ref={numbersRef} className="mt-14" aria-labelledby="numeros-title">
         <p className="label flex items-center gap-2 text-sun">
           <span className="inline-block size-2 animate-blink rounded-full bg-flame" /> Antes de sair
         </p>

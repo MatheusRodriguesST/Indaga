@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { activeSession, getRecent, pushRecent, savedName } from "@/lib/client-storage";
 import { DIFFICULTY_LABEL } from "@/lib/labels";
+import { firstReferrer, rememberReferrer, track } from "@/lib/track";
 import type { SessionState } from "@/types/domain";
 import { quizApi } from "./api";
 import { Dossier } from "./Dossier";
@@ -35,7 +36,7 @@ export function QuizApp({ campaign, autoAnonymous }: { campaign: string | null; 
       setError(null);
       try {
         savedName.set(displayName);
-        const s = await quizApi.start({ displayName, campaign, recent: getRecent() });
+        const s = await quizApi.start({ displayName, campaign, recent: getRecent(), referrer: firstReferrer() });
         pushRecent(s.questions.map((q) => q.id));
         activeSession.set(s.session_id);
         setState(s);
@@ -53,6 +54,12 @@ export function QuizApp({ campaign, autoAnonymous }: { campaign: string | null; 
   );
 
   // Retoma partida em andamento (recarregou a página) ou inicia.
+  // visita ao /desafio (conta quem abriu, mesmo que não comece)
+  useEffect(() => {
+    rememberReferrer();
+    track("quiz_view", undefined, { campaign });
+  }, [campaign]);
+
   useEffect(() => {
     const n = savedName.get() ?? "";
     setName(n);
@@ -113,6 +120,7 @@ export function QuizApp({ campaign, autoAnonymous }: { campaign: string | null; 
   }, [state, isLast]);
 
   const restart = useCallback(() => {
+    track("restart_click");
     activeSession.set(null);
     start(savedName.get());
   }, [start]);

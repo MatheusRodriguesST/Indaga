@@ -132,6 +132,8 @@ export async function createSession(input: {
   displayName: string | null;
   campaign: string | null;
   recent: string[];
+  device?: string | null;
+  referrer?: string | null;
 }): Promise<SessionState> {
   const r = repo();
   // /desafio/<campanha> usa a coleção de mesmo nome, se existir; senão a padrão.
@@ -147,6 +149,8 @@ export async function createSession(input: {
     anonymous_identifier: input.anonymousId,
     display_name: input.displayName,
     campaign: input.campaign,
+    device: input.device ?? null,
+    referrer: input.referrer ?? null,
     question_ids: questions.map((q) => q.id),
     option_order,
   });

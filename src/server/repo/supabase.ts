@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Category, EditorialReview, Question, QuestionFull, QuizAnswer, QuizSession } from "@/types/domain";
+import type { Category, EditorialReview, Question, QuestionFull, QuizAnswer, QuizEvent, QuizSession } from "@/types/domain";
 import type { QuestionInput, QuestionListItem, Repo } from "./types";
 
 const QUESTION_COLS =
@@ -11,6 +11,22 @@ const FULL_SELECT = `${QUESTION_COLS},
   options:question_options(*),
   sources:question_sources(*),
   legislation(*)`;
+
+/** O Supabase devolve no máximo 1000 linhas por chamada: pagina até `limit`. */
+async function pageAll<T>(
+  limit: number,
+  query: (from: number, to: number) => PromiseLike<{ data: unknown; error: { message: string } | null }>,
+): Promise<T[]> {
+  const PAGE = 1000;
+  const out: T[] = [];
+  for (let from = 0; from < limit; from += PAGE) {
+    const to = Math.min(from + PAGE, limit) - 1;
+    const rows = unwrap(await query(from, to)) as T[];
+    out.push(...rows);
+    if (rows.length < to - from + 1) break;
+  }
+  return out;
+}
 
 function unwrap<T>(res: { data: T | null; error: { message: string } | null }): T {
   if (res.error) throw new Error(`[supabase] ${res.error.message}`);
@@ -133,6 +149,30 @@ export function createSupabaseRepo(url: string, serviceKey: string): Repo {
           .update({ completed_at: new Date().toISOString(), score })
           .eq("id", id)
           .is("completed_at", null),
+      );
+    },
+
+    async insertEvent(input) {
+      unwrap(await sb.from("quiz_events").insert(input));
+    },
+    async listEvents(since, limit = 20000) {
+      return pageAll<QuizEvent>(limit, (from, to) =>
+        sb.from("quiz_events").select("*").gte("created_at", since).order("created_at", { ascending: false }).range(from, to),
+      );
+    },
+    async listSessions(since, limit = 5000) {
+      return pageAll<QuizSession>(limit, (from, to) =>
+        sb
+          .from("quiz_sessions")
+          .select("id, anonymous_identifier, display_name, campaign, question_ids, started_at, completed_at, score, device, referrer")
+          .gte("started_at", since)
+          .order("started_at", { ascending: false })
+          .range(from, to),
+      );
+    },
+    async listAnswers(since, limit = 50000) {
+      return pageAll<QuizAnswer>(limit, (from, to) =>
+        sb.from("quiz_answers").select("*").gte("answered_at", since).order("answered_at").range(from, to),
       );
     },
 

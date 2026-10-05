@@ -121,6 +121,31 @@ export interface QuizSession {
   started_at: string;
   completed_at: string | null;
   score: number | null;
+  device?: string | null;
+  referrer?: string | null;
+}
+
+export const EVENT_TYPES = [
+  "landing_view",
+  "quiz_view",
+  "numbers_view",
+  "banco_view",
+  "source_click",
+  "share_click",
+  "restart_click",
+] as const;
+export type EventType = (typeof EVENT_TYPES)[number];
+
+export interface QuizEvent {
+  id: string;
+  session_id: string | null;
+  anonymous_identifier: string | null;
+  type: EventType;
+  path: string | null;
+  campaign: string | null;
+  device: string | null;
+  meta: Record<string, string | number | boolean | null>;
+  created_at: string;
 }
 
 export interface QuizAnswer {

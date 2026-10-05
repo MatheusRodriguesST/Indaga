@@ -14,7 +14,7 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 export const quizApi = {
-  start: (body: { displayName: string | null; campaign: string | null; recent: string[] }) =>
+  start: (body: { displayName: string | null; campaign: string | null; recent: string[]; referrer: string | null }) =>
     call<SessionState>("/api/sessions", { method: "POST", body: JSON.stringify(body) }),
   state: (id: string) => call<SessionState>(`/api/sessions/${id}`),
   answer: (id: string, questionId: string, optionId: string) =>

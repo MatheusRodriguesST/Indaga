@@ -9,6 +9,7 @@ import type {
   Question,
   QuestionOption,
   QuizAnswer,
+  QuizEvent,
   QuizSession,
   Source,
 } from "@/types/domain";
@@ -23,12 +24,13 @@ interface Store {
   sessions: QuizSession[];
   answers: QuizAnswer[];
   reviews: EditorialReview[];
+  events: QuizEvent[];
 }
 
 const now = () => new Date().toISOString();
 
 function seedStore(): Store {
-  const s: Store = { categories: [], questions: [], options: [], sources: [], legislation: [], sessions: [], answers: [], reviews: [] };
+  const s: Store = { categories: [], questions: [], options: [], sources: [], legislation: [], sessions: [], answers: [], reviews: [], events: [] };
   for (const c of SEED_CATEGORIES) s.categories.push({ id: randomUUID(), ...c });
   for (const q of SEED_QUESTIONS) {
     const id = randomUUID();
@@ -190,6 +192,19 @@ export const memoryRepo: Repo = {
       s.completed_at = now();
       s.score = score;
     }
+  },
+
+  async insertEvent(input) {
+    (db.events ??= []).push({ ...input, id: randomUUID(), created_at: now() });
+  },
+  async listEvents(since, limit = 20000) {
+    return (db.events ?? []).filter((e) => e.created_at >= since).sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, limit);
+  },
+  async listSessions(since, limit = 5000) {
+    return db.sessions.filter((s) => s.started_at >= since).sort((a, b) => b.started_at.localeCompare(a.started_at)).slice(0, limit);
+  },
+  async listAnswers(since, limit = 50000) {
+    return db.answers.filter((a) => a.answered_at >= since).slice(0, limit);
   },
 
   async stats() {

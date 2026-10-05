@@ -7,6 +7,7 @@ import type {
   QuestionFull,
   QuestionOption,
   QuizAnswer,
+  QuizEvent,
   QuizSession,
   Source,
 } from "@/types/domain";
@@ -63,6 +64,14 @@ export interface Repo {
   /** Deve falhar (retornar null) se a pergunta já foi respondida nesta sessão. */
   insertAnswer(input: Omit<QuizAnswer, "id" | "answered_at">): Promise<QuizAnswer | null>;
   completeSession(id: string, score: number): Promise<void>;
+
+  insertEvent(input: Omit<QuizEvent, "id" | "created_at">): Promise<void>;
+  /** Eventos desde a data (ISO), do mais novo para o mais antigo. */
+  listEvents(sinceIso: string, limit?: number): Promise<QuizEvent[]>;
+  /** Sessões desde a data (ISO), da mais nova para a mais antiga. */
+  listSessions(sinceIso: string, limit?: number): Promise<QuizSession[]>;
+  /** Respostas desde a data (ISO) — para estatísticas agregadas. */
+  listAnswers(sinceIso: string, limit?: number): Promise<QuizAnswer[]>;
 
   stats(): Promise<AggregateStats>;
 }

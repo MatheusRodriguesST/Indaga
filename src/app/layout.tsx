@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { BRAND } from "@/config/brand";
+import { LinkTracker } from "@/components/analytics/LinkTracker";
 import { appUrl } from "@/lib/app-url";
 import "./globals.css";
 
@@ -46,7 +47,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`${archivo.variable} ${plexMono.variable}`}>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <LinkTracker />
+      </body>
     </html>
   );
 }

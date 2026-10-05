@@ -4,6 +4,7 @@ import { z } from "zod";
 import { QUIZ_CONFIG } from "@/config/brand";
 import { errorResponse, guardRequest, parseJson, uuid } from "@/server/http";
 import { createSession } from "@/server/quiz";
+import { deviceFromUA, referrerHost } from "@/server/visitor";
 
 const ANON_COOKIE = "gb_anon";
 
@@ -23,6 +24,7 @@ const Body = z.object({
     .nullable()
     .optional(),
   recent: z.array(uuid).max(QUIZ_CONFIG.recentMemory * 2).optional(),
+  referrer: z.string().max(500).nullable().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -38,6 +40,8 @@ export async function POST(req: NextRequest) {
       displayName: body.displayName || null,
       campaign: body.campaign || null,
       recent: body.recent ?? [],
+      device: deviceFromUA(req.headers.get("user-agent")),
+      referrer: referrerHost(body.referrer, req.headers.get("host")),
     });
 
     const res = NextResponse.json(state, { status: 201 });

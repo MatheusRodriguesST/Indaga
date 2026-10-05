@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowUpRight, ChevronDown } from "lucide-react";
 import type { Metadata } from "next";
+import { Track } from "@/components/analytics/Track";
 import { Logo } from "@/components/brand/Logo";
 import { NumbersIntro, NumbersSection } from "@/components/banco/NumbersSection";
 import { Badge } from "@/components/ui/Badge";
@@ -22,6 +23,7 @@ export default async function BancoPage() {
 
   return (
     <main className="overflow-x-clip bg-blood">
+      <Track type="banco_view" />
       {/* ================= ABERTURA ================= */}
       <header className="grain relative px-5 pb-12 pt-5">
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">

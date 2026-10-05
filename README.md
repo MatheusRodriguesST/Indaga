@@ -64,6 +64,9 @@ Não existe tabela `users` de participantes de propósito (minimização de dado
 - **Fluxo editorial:** `Rascunho → Em revisão → (checklist de verificação) → Publicada`, com histórico de cada transição. Só **publicadas** entram no sorteio.
 - **Anti-desinformação** (`src/server/editorial.ts`): bloqueia publicação sem fonte, sem data de verificação, sem classificação; termos sensíveis ("crime", "fraude", "censura"…) exigem situação jurídica; investigação/denúncia não pode ser descrita como condenação; "inconstitucional" exige norma citada.
 - **Categorias** e **QR Code** (com campanha: `/desafio/sala-3b`).
+- **Painel:** funil (visitou → abriu o desafio → terminou → **viu os gráficos** → abriu `/banco` → clicou em fontes), partidas por dia e por horário, aparelho, origem (Instagram, WhatsApp…), campanhas e fontes mais clicadas. Filtro de 7/30/90 dias.
+- **Participantes:** nomes (quando a pessoa digita), placar, se viu os gráficos, quantas vezes jogou, campanha, aparelho e origem. Exporta CSV (abre no Excel/Google Sheets).
+- **Cartaz para imprimir:** `print/cartaz-indaga-a4.pdf` (QR → `/desafio/cartaz`); o fonte editável é `print/cartaz.html`.
 
 ---
 
@@ -110,7 +113,7 @@ Nome provisório: **GABARITO** (troque em `src/config/brand.ts`). Outras opçõe
 
 ## Deploy (Vercel + Supabase)
 
-1. **Supabase:** crie o projeto, rode `supabase/migrations/0001_init.sql` no SQL Editor (ou `supabase link` + `supabase db query --linked --file supabase/migrations/0001_init.sql`) e depois `npm run db:seed` localmente (com o `.env.local` preenchido).
+1. **Supabase:** crie o projeto, rode `supabase/migrations/0001_init.sql` e depois `0002_analytics.sql` no SQL Editor (ou `supabase link` + `supabase db query --linked --file supabase/migrations/0001_init.sql`) e depois `npm run db:seed` localmente (com o `.env.local` preenchido).
 2. **Vercel:** em vercel.com → *Add New → Project* → importe o repositório do GitHub. O Next.js é detectado sozinho.
 3. **Environment Variables** (Production):
 

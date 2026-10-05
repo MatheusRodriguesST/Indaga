@@ -1,4 +1,5 @@
 import { ArrowRight, FileSearch, ShieldCheck, UserRoundX } from "lucide-react";
+import { Track } from "@/components/analytics/Track";
 import { Logo } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Marquee } from "@/components/ui/Marquee";
@@ -17,6 +18,7 @@ const STEPS = [
 export default function Home() {
   return (
     <main className="overflow-x-clip">
+      <Track type="landing_view" />
       {/* ================= HERO / CARTAZ ================= */}
       <section className="grain relative min-h-[100svh] bg-blood px-6 pb-16 pt-6">
         {/* geometria de cartaz */}

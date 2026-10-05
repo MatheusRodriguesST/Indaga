@@ -73,8 +73,9 @@ export function Identify({
       </div>
 
       <p className="mt-8 max-w-md text-sm leading-relaxed text-paper/65">
-        Não pedimos e-mail, CPF, telefone nem senha. Se você digitar um nome, ele fica salvo junto com a sua partida apenas
-        para aparecer no seu resultado. Nada é compartilhado e ninguém é classificado politicamente.
+        Não pedimos e-mail, CPF, telefone nem senha. Se você digitar um nome, ele fica salvo com a sua partida e pode ser
+        visto pelos organizadores do quiz. Também contamos, sem identificar ninguém, quais páginas e fontes são abertas.
+        Não divulgamos seus dados e ninguém é classificado politicamente.
       </p>
     </motion.div>
   );

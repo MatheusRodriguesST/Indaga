@@ -65,7 +65,7 @@ async function main() {
       sb.from("question_options").insert(
         q.options.map((text, i) => ({ question_id: id, option_label: LABELS[i], option_text: text, is_correct: q.correct !== null && i === q.correct })),
       ),
-      sb.from("sources").insert(q.sources.map((s, i) => ({ ...s, description: s.description ?? null, question_id: id, sort_order: i }))),
+      sb.from("question_sources").insert(q.sources.map((s, i) => ({ ...s, description: s.description ?? null, question_id: id, sort_order: i }))),
       q.legislation.length
         ? sb.from("legislation").insert(q.legislation.map((l, i) => ({ ...l, question_id: id, sort_order: i })))
         : Promise.resolve({ error: null }),

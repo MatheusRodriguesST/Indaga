@@ -44,3 +44,7 @@ next-env.d.ts
 
 # ferramentas locais
 .claude/
+
+# Supabase CLI (arquivos locais do link)
+supabase/.temp/
+supabase/.branches/

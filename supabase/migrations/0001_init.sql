@@ -85,8 +85,9 @@ create table if not exists question_options (
 create unique index if not exists question_options_one_correct
   on question_options (question_id) where is_correct;
 
--- ---------- sources ----------
-create table if not exists sources (
+-- ---------- question_sources ----------
+-- (nome com prefixo para não colidir com outra tabela "sources" no mesmo projeto)
+create table if not exists question_sources (
   id                uuid primary key default gen_random_uuid(),
   question_id       uuid not null references questions(id) on delete cascade,
   title             text not null,
@@ -97,7 +98,7 @@ create table if not exists sources (
   description       text,
   sort_order        int not null default 0
 );
-create index if not exists sources_question_idx on sources (question_id);
+create index if not exists question_sources_question_idx on question_sources (question_id);
 
 -- ---------- legislation ----------
 create table if not exists legislation (
@@ -182,7 +183,7 @@ group by q.id;
 alter table categories        enable row level security;
 alter table questions         enable row level security;
 alter table question_options  enable row level security;
-alter table sources           enable row level security;
+alter table question_sources  enable row level security;
 alter table legislation       enable row level security;
 alter table quiz_sessions     enable row level security;
 alter table quiz_answers      enable row level security;

@@ -9,9 +9,14 @@ import { Field, Input } from "./fields";
 
 export function QrBuilder({ base }: { base: string }) {
   const [campaign, setCampaign] = useState("");
+  const [origin, setOrigin] = useState(base);
+  useEffect(() => {
+    // o endereço real (ex.: domínio aleatório da Vercel) vale mais que o configurado
+    setOrigin(window.location.origin);
+  }, []);
   const [svg, setSvg] = useState("");
   const clean = campaign.toLowerCase().replace(/[^a-z0-9-]/g, "");
-  const url = `${base.replace(/\/$/, "")}/desafio${clean ? `/${clean}` : ""}`;
+  const url = `${origin.replace(/\/$/, "")}/desafio${clean ? `/${clean}` : ""}`;
 
   useEffect(() => {
     QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#111111", light: "#ffffff" } })

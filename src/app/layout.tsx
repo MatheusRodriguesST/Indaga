@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { BRAND } from "@/config/brand";
+import { appUrl } from "@/lib/app-url";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -17,10 +18,9 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(appUrl),
+  metadataBase: new URL(appUrl()),
   title: {
     default: `${BRAND.name} — Você conhece os fatos?`,
     template: `%s · ${BRAND.name}`,

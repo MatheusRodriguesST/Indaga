@@ -110,7 +110,7 @@ Nome provisório: **GABARITO** (troque em `src/config/brand.ts`). Outras opçõe
 
 ## Deploy (Vercel + Supabase)
 
-1. **Supabase:** crie o projeto, rode `supabase/migrations/0001_init.sql` no SQL Editor e depois `npm run db:seed` localmente (com o `.env.local` preenchido).
+1. **Supabase:** crie o projeto, rode `supabase/migrations/0001_init.sql` no SQL Editor (ou `supabase link` + `supabase db query --linked --file supabase/migrations/0001_init.sql`) e depois `npm run db:seed` localmente (com o `.env.local` preenchido).
 2. **Vercel:** em vercel.com → *Add New → Project* → importe o repositório do GitHub. O Next.js é detectado sozinho.
 3. **Environment Variables** (Production):
 
@@ -119,7 +119,7 @@ Nome provisório: **GABARITO** (troque em `src/config/brand.ts`). Outras opçõe
    | `SUPABASE_URL` | URL do projeto Supabase |
    | `SUPABASE_SERVICE_ROLE_KEY` | chave *service_role* (secreta) |
    | `ADMIN_SECRET` | senha do `/admin`, mínimo 12 caracteres |
-   | `NEXT_PUBLIC_APP_URL` | o domínio da Vercel, ex.: `https://gabarito.vercel.app` |
+   | `NEXT_PUBLIC_APP_URL` | *opcional* — só se tiver domínio próprio. Sem ela, o site usa o domínio `.vercel.app` automaticamente |
 
    A integração **Supabase** do Vercel Marketplace também funciona: ela cria `NEXT_PUBLIC_SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`, que o app aceita.
 4. **Deploy.** Depois abra `/admin/qr`, gere o QR Code e imprima.

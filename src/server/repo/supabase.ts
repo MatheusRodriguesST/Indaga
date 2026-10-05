@@ -9,7 +9,7 @@ const QUESTION_COLS =
 const FULL_SELECT = `${QUESTION_COLS},
   category:categories(*),
   options:question_options(*),
-  sources(*),
+  sources:question_sources(*),
   legislation(*)`;
 
 function unwrap<T>(res: { data: T | null; error: { message: string } | null }): T {
@@ -35,12 +35,12 @@ export function createSupabaseRepo(url: string, serviceKey: string): Repo {
 
   async function writeChildren(id: string, input: QuestionInput) {
     unwrap(await sb.from("question_options").delete().eq("question_id", id));
-    unwrap(await sb.from("sources").delete().eq("question_id", id));
+    unwrap(await sb.from("question_sources").delete().eq("question_id", id));
     unwrap(await sb.from("legislation").delete().eq("question_id", id));
     if (input.options.length)
       unwrap(await sb.from("question_options").insert(input.options.map((o) => ({ ...o, question_id: id }))));
     if (input.sources.length)
-      unwrap(await sb.from("sources").insert(input.sources.map((s, i) => ({ ...s, question_id: id, sort_order: i }))));
+      unwrap(await sb.from("question_sources").insert(input.sources.map((s, i) => ({ ...s, question_id: id, sort_order: i }))));
     if (input.legislation.length)
       unwrap(await sb.from("legislation").insert(input.legislation.map((l, i) => ({ ...l, question_id: id, sort_order: i }))));
   }
@@ -78,7 +78,7 @@ export function createSupabaseRepo(url: string, serviceKey: string): Repo {
     async listQuestions(filter) {
       let q = sb
         .from("questions")
-        .select(`${QUESTION_COLS}, category:categories(*), sources(count)`)
+        .select(`${QUESTION_COLS}, category:categories(*), sources:question_sources(count)`)
         .order("updated_at", { ascending: false });
       if (filter?.status) q = q.eq("editorial_status", filter.status);
       const rows = unwrap(await q) as unknown as (Question & { category: Category | null; sources: { count: number }[] })[];
